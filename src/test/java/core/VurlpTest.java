@@ -52,13 +52,24 @@ public class VurlpTest {
 
     @Test
     public void fromParamsViaMapInvalid() {
-        Map<String,String> map = new HashMap<>();
-        map.putIfAbsent("simpleString", "someString");
-        VurlpOptional<TestPojo> params = this.vurlp.fromParams(map);
+        Map<String,String> map1 = new HashMap<>();
+        map1.put("simpleString", "someString");
+        VurlpOptional<TestPojo> params1 = this.vurlp.fromParams(map1);
 
-        assertThat(params.isValid(), is(false));
-        assertThat(params.getViolations().size(), is(1));
-        assertThat(params.getViolationsAsString(), containsString("'floatObject' must not be null"));
+        assertThat(params1.isValid(), is(false));
+        assertThat(params1.getViolations().size(), is(1));
+        assertThat(params1.getViolationsAsString(), containsString("'floatObject' must not be null"));
+
+
+        Map<String,String> map2 = new HashMap<>();
+        map2.put("simpleString", "someString");
+        map2.put("floatObject", "0.9");
+        VurlpOptional<TestPojo> params2 = this.vurlp.fromParams(map2);
+
+        assertThat(params2.isValid(), is(false));
+        assertThat(params2.getViolations().size(), is(1));
+        assertThat(params2.getViolationsAsString(), containsString("'floatObject' must be >=1"));
+
     }
 
     @Test

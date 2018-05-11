@@ -207,7 +207,7 @@ public final class VurlpOptional<T> {
         int parameterCount = 0;
         for(ConstraintViolation<?> violation : this.violations) {
             parameterCount++;
-            stringBuilder.append(violation);
+            stringBuilder.append(violation.getMessage());
             if(parameterCount < this.violations.size()) {
                 stringBuilder.append(", ");
             }
