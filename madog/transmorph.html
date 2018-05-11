@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<title>Transmorph string and shieeet</title>
+		<link rel="shortcut icon" type="image/png" href="http://download.seaicons.com/icons/iconarchive/red-orb-alphabet/128/Letter-S-icon.png"/>
+		<style type="text/css">
+			body {
+				font-family: Arial
+			}
+			.outer_container {
+
+			}
+			.inner_container {
+				min-height:30px;
+				padding: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<div class="outer_container">
+				<div class="inner_container" style="background-color:#a3c0ed">
+					<h2>String to transform:</h2>
+					<input type="text" id="target" value="" style="width:500px" />
+				</div>
+
+				<div class="inner_container" style="background-color:#8ca7d1">
+					<input type="text" id="camelCase" value="" style="width:500px" />
+				</div>
+
+				<div class="inner_container" style="background-color:#a6bbdb">
+					<input type="text" id="fileName" value="" style="width:500px" />
+				</div>
+			<div>
+		</center>
+
+
+
+		<script
+			  src="https://code.jquery.com/jquery-3.2.1.min.js"
+			  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			  crossorigin="anonymous"></script>
+		<script type="text/javascript">
+
+			$("#target").keyup(function() {
+				var camelCase = $("#target").val();
+				camelCase = toTitleCase($("#target").val());
+				camelCase = removeWhiteSpaces(camelCase);
+			  	$("#camelCase").val(camelCase);
+
+				var fileName = $("#target").val();
+				fileName = toLowerCase(fileName);
+				fileName = replaceWhiteSpaceWithDashes(fileName);
+				$("#fileName").val(fileName);
+			});
+
+
+			$("#camelCase").click(function() {
+				document.getElementById("camelCase").select();
+				document.execCommand("Copy");
+			});
+			$("#fileName").click(function() {
+				document.getElementById("fileName").select();
+				document.execCommand("Copy");
+			});
+
+
+			function toTitleCase(str) {
+			    return str.replace(/(?:^|\s)\w/g, function(match) {
+			        return match.toUpperCase();
+			    });
+			}
+			function removeWhiteSpaces(str) {
+				return str.replace(/\s/g, "");
+			}
+			function toLowerCase(str) {
+				return str.toLowerCase();
+			}
+			function replaceWhiteSpaceWithDashes(str) {
+				return str.replace(/\s+/g, "-");
+			}
+
+
+
+		</script>
+	</body>
+</html>
