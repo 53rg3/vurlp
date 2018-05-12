@@ -50,7 +50,11 @@ public class Vurlp<T> {
 
         if (this.shouldUseUrlEncoding) {
             for (Entry<String, String> entry : urlParamsAsMap.entrySet()) {
-                urlParamsAsMap.put(entry.getKey(), this.decode(entry.getValue()));
+                if(entry.getValue() == null || entry.getValue().equals("")) {
+                    urlParamsAsMap.put(entry.getKey(), null);
+                } else {
+                    urlParamsAsMap.put(entry.getKey(), this.decode(entry.getValue()));
+                }
             }
         }
         final T mappedObject = this.gson.fromJson(this.gson.toJsonTree(urlParamsAsMap), this.clazz);
@@ -68,7 +72,7 @@ public class Vurlp<T> {
         Map<String, String> map = new HashMap<>();
         for (String param : urlParams.split("&")) {
             String[] split = param.split("=", 2);
-            map.put(split[0], split[0] == null ? null : split[1]);
+            map.put(split[0], split.length > 1 ? split[1] : null);
         }
 
         return this.fromParams(map);
@@ -93,18 +97,26 @@ public class Vurlp<T> {
             parameterCount++;
 
             stringBuilder.append(entry.getKey());
-            stringBuilder.append("=");
-            if (this.shouldUseUrlEncoding) {
-                stringBuilder.append(this.encode(entry.getValue()));
-            } else {
-                stringBuilder.append(entry.getValue());
+
+            if(entry.getValue() != null && !entry.getValue().equals("")) {
+                stringBuilder.append("=");
+                if (this.shouldUseUrlEncoding) {
+                    stringBuilder.append(this.encode(entry.getValue()));
+                } else {
+                    stringBuilder.append(entry.getValue());
+                }
             }
+
             if (parameterCount < map.size()) {
                 stringBuilder.append("&");
             }
         }
 
         return VurlpOptional.of(stringBuilder.toString());
+    }
+
+    public VurlpOptional<String> toParams(final T object) {
+        return this.toParams(object, true);
     }
 
     private String encode(String value) {
@@ -122,6 +134,5 @@ public class Vurlp<T> {
             return URLDecoder.decode(value);
         }
     }
-
 
 }

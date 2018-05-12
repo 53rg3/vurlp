@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 
 public class VurlpTest {
@@ -35,10 +36,16 @@ public class VurlpTest {
         map2.put("floatObject", "1");
         map2.put("simpleString", "some+Stri%3Dng");
 
+        Map<String,String> map3 = new HashMap<>();
+        map3.put("floatObject", "1");
+        map3.put("simpleString", null);
+
         VurlpOptional<TestPojo> params = this.vurlp.fromParams(map1);
         VurlpOptional<TestPojo> paramsWithoutDecoding = this.vurlpWithoutEncoding.fromParams(map2);
+        VurlpOptional<TestPojo> paramsWithNull = this.vurlp.fromParams(map3);
         TestPojo testPojo1 = params.get();
         TestPojo testPojo2 = paramsWithoutDecoding.get();
+        TestPojo testPojo3 = paramsWithNull.get();
 
 
         assertThat(params.isValid(), is(true));
@@ -48,6 +55,10 @@ public class VurlpTest {
         assertThat(paramsWithoutDecoding.isValid(), is(true));
         assertThat(testPojo2.getFloatObject(), is(1.0F));
         assertThat(testPojo2.getSimpleString(), is("some+Stri%3Dng"));
+
+        assertThat(paramsWithNull.isValid(), is(true));
+        assertThat(testPojo3.getFloatObject(), is(1.0F));
+        assertThat(testPojo3.getSimpleString(), is(nullValue()));
     }
 
     @Test
@@ -69,7 +80,19 @@ public class VurlpTest {
         assertThat(params2.isValid(), is(false));
         assertThat(params2.getViolations().size(), is(1));
         assertThat(params2.getViolationsAsString(), containsString("'floatObject' must be >=1"));
+    }
 
+    @Test
+    public void fromParamsString() {
+        VurlpOptional<TestPojo> withValue = this.vurlp.fromParams("?simpleString=some+Stri%3Dng&floatObject=1.0");
+        VurlpOptional<TestPojo> withNull = this.vurlp.fromParams("?simpleString&floatObject=1.0");
+        TestPojo testPojoWithValue = withValue.get();
+        TestPojo testPojoWithNull = withNull.get();
+
+        assertThat(testPojoWithValue.getSimpleString(), is("some Stri=ng"));
+        assertThat(testPojoWithValue.getFloatObject(), is(1.0F));
+        assertThat(testPojoWithNull.getSimpleString(), is(nullValue()));
+        assertThat(testPojoWithNull.getFloatObject(), is(1.0F));
     }
 
     @Test
@@ -99,6 +122,17 @@ public class VurlpTest {
         assertThat(paramsWithPrefix.get(), is("?simpleString=someString&floatObject=1.0"));
         assertThat(paramsWithoutPrefix.get(), is("simpleString=someString&floatObject=1.0"));
         assertThat(paramsWithEncoding.get(), is("?simpleString=some+Stri%3Dng&floatObject=1.0"));
+    }
+    
+    @Test
+    public void toParamsParsingTest() {
+        TestPojo withNull = new TestPojo(null, 1.0F);
+        TestPojo withValue = new TestPojo("123", 1.0F);
+        TestPojo withEmpty = new TestPojo("", 1.0F);
+
+        assertThat(this.vurlp.toParams(withNull).get(), is("?floatObject=1.0"));
+        assertThat(this.vurlp.toParams(withValue).get(), is("?simpleString=123&floatObject=1.0"));
+        assertThat(this.vurlp.toParams(withEmpty).get(), is("?simpleString&floatObject=1.0"));
     }
 
     @Test
