@@ -16,7 +16,7 @@ mvn clean install
 ```JAVA
 <dependency>
     <groupId>io.github.53rg3</groupId>
-    <artifactId>elsa</artifactId>
+    <artifactId>vurlp</artifactId>
     <version>0.1</version>
 </dependency>
 ```

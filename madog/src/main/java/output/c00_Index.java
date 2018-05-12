@@ -18,7 +18,7 @@ public class c00_Index extends Output {
         Print.codeBlock("" +
                 "<dependency>\n" +
                 "    <groupId>io.github.53rg3</groupId>\n" +
-                "    <artifactId>elsa</artifactId>\n" +
+                "    <artifactId>vurlp</artifactId>\n" +
                 "    <version>0.1</version>\n" +
                 "</dependency>" +
                 "");
